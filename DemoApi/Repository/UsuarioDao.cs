@@ -14,12 +14,27 @@ namespace DemoApi.Repository
     {
         public List<Usuario> GetAllUsers(string connString)
         {
-            return SqlHelper.ExtecuteProcedureReturnData<List<Usuario>>(connString,
-                "GetUsers", r => r.TranslateAsUsersList());
+            return SqlHelper.ExtecuteProcedureReturnData<List<Usuario>>(connString,"GetUsers", r => r.TranslateAsUsersList());
         }
 
         public string SaveUser(Usuario model, string connString)
         {
+            var outParam = new SqlParameter("@ReturnCode", SqlDbType.NVarChar, 20){
+                Direction = ParameterDirection.Output
+            };
+            SqlParameter[] param = {
+                new SqlParameter("@Id",model.Id),
+                new SqlParameter("@Name",model.Name),
+                new SqlParameter("@Email",model.Email),
+                new SqlParameter("@Mobile",model.Mobile),
+                new SqlParameter("@Address",model.Address),
+                outParam
+            };
+            SqlHelper.ExecuteProcedureReturnString(connString, "SaveUser", param);
+            return (string)outParam.Value;
+        }
+
+        public Usuario GetUser(int id, string connString){
             var outParam = new SqlParameter("@ReturnCode", SqlDbType.NVarChar, 20)
             {
                 Direction = ParameterDirection.Output
@@ -27,7 +42,7 @@ namespace DemoApi.Repository
             SqlParameter[] param = {
                 new SqlParameter("@Id",model.Id),
                 new SqlParameter("@Name",model.Name),
-                new SqlParameter("@EmailId",model.Email),
+                new SqlParameter("@Email",model.Email),
                 new SqlParameter("@Mobile",model.Mobile),
                 new SqlParameter("@Address",model.Address),
                 outParam

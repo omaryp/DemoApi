@@ -47,6 +47,14 @@ namespace DemoApi.Controllers
                 msg.IsSuccess = false;
                 msg.ReturnMessage = "Numero de celular ya existe.";
             }
+            return Ok(msg);
+        }
+
+        [HttpGet]
+        public IActionResult getUser(int id)
+        {
+            var data = DbClientFactory<UsuarioDao>.Instance.GetAllUsers(appSettings.Value.DBConn);
+            var data = DbClientFactory<UsuarioDao>.Instance.Get;
             return Ok(data);
         }
     }

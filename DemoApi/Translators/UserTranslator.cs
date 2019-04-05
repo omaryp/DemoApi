@@ -10,10 +10,8 @@ namespace DemoApi.Translators
 {
     public static class UserTranslator
     {
-        public static Usuario TranslateAsUser(this SqlDataReader reader, bool isList = false)
-        {
-            if (!isList)
-            {
+        public static Usuario TranslateAsUser(this SqlDataReader reader, bool isList = false){
+            if (!isList){
                 if (!reader.HasRows)
                     return null;
                 reader.Read();
@@ -40,11 +38,9 @@ namespace DemoApi.Translators
             return item;
         }
 
-        public static List<Usuario> TranslateAsUsersList(this SqlDataReader reader)
-        {
+        public static List<Usuario> TranslateAsUsersList(this SqlDataReader reader){
             var list = new List<Usuario>();
-            while (reader.Read())
-            {
+            while (reader.Read()){
                 list.Add(TranslateAsUser(reader, true));
             }
             return list;
