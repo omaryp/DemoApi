@@ -50,11 +50,9 @@ namespace DemoApi.Controllers
             return Ok(msg);
         }
 
-        [HttpGet]
-        public IActionResult getUser(int id)
-        {
-            var data = DbClientFactory<UsuarioDao>.Instance.GetAllUsers(appSettings.Value.DBConn);
-            var data = DbClientFactory<UsuarioDao>.Instance.Get;
+        [HttpGet("{id}")]
+        public IActionResult getUser(int id){
+            var data = DbClientFactory<UsuarioDao>.Instance.GetUser(id, appSettings.Value.DBConn);
             return Ok(data);
         }
     }

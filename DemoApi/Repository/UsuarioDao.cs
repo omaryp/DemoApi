@@ -35,20 +35,12 @@ namespace DemoApi.Repository
         }
 
         public Usuario GetUser(int id, string connString){
-            var outParam = new SqlParameter("@ReturnCode", SqlDbType.NVarChar, 20)
-            {
-                Direction = ParameterDirection.Output
-            };
+            string sql = "";
+            sql = "select * from users where Id = @Id";
             SqlParameter[] param = {
-                new SqlParameter("@Id",model.Id),
-                new SqlParameter("@Name",model.Name),
-                new SqlParameter("@Email",model.Email),
-                new SqlParameter("@Mobile",model.Mobile),
-                new SqlParameter("@Address",model.Address),
-                outParam
+                new SqlParameter("@Id",id)
             };
-            SqlHelper.ExecuteProcedureReturnString(connString, "SaveUser", param);
-            return (string)outParam.Value;
+            return SqlHelper.ExtecuteStatementData<Usuario>(connString, sql, r => r.TranslateAsUser(),param);
         }
 
         public string DeleteUser(int id, string connString)

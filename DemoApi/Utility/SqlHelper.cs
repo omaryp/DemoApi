@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace DemoApi.Utility
             string result = "";
             using (var sqlConnection = new SqlConnection(connString)){
                 using (var command = sqlConnection.CreateCommand()){
-                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    command.CommandType = CommandType.StoredProcedure;
                     command.CommandText = procName;
                     if (paramters != null)
                         command.Parameters.AddRange(paramters);
@@ -28,7 +29,7 @@ namespace DemoApi.Utility
         public static T ExtecuteProcedureReturnData<T>(string connString, string procName,Func<SqlDataReader, T> translator,params SqlParameter[] parameters){
             using (var sqlConnection = new SqlConnection(connString)){
                 using (var sqlCommand = sqlConnection.CreateCommand()){
-                    sqlCommand.CommandType = System.Data.CommandType.StoredProcedure;
+                    sqlCommand.CommandType = CommandType.StoredProcedure;
                     sqlCommand.CommandText = procName;
                     if (parameters != null)
                         sqlCommand.Parameters.AddRange(parameters);
@@ -45,6 +46,28 @@ namespace DemoApi.Utility
                             { }
                         }
                         return elements;
+                    }
+                }
+            }
+        }
+
+        public static T ExtecuteStatementData<T>(string connString, string consulta, Func<SqlDataReader, T> translator, params SqlParameter[] parameters){
+            using (var sqlConnection = new SqlConnection(connString)){
+                using (var sqlCommand = sqlConnection.CreateCommand()){
+                    sqlCommand.CommandType = CommandType.Text;
+                    sqlCommand.CommandText = consulta;
+                    if (parameters != null)
+                        sqlCommand.Parameters.AddRange(parameters);
+                    sqlConnection.Open();
+                    using (var reader = sqlCommand.ExecuteReader()){
+                        T element;
+                        try{
+                            element = translator(reader);
+                        }
+                        finally{
+                            while (reader.NextResult()){ }
+                        }
+                        return element;
                     }
                 }
             }
